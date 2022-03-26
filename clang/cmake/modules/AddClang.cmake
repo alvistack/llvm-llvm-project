@@ -115,12 +115,15 @@ macro(add_clang_library name)
 
       if (NOT LLVM_INSTALL_TOOLCHAIN_ONLY OR ARG_INSTALL_WITH_TOOLCHAIN)
         get_target_export_arg(${name} Clang export_to_clangtargets UMBRELLA clang-libraries)
-        install(TARGETS ${lib}
-          COMPONENT ${lib}
-          ${export_to_clangtargets}
-          LIBRARY DESTINATION lib${LLVM_LIBDIR_SUFFIX}
-          ARCHIVE DESTINATION lib${LLVM_LIBDIR_SUFFIX}
-          RUNTIME DESTINATION bin)
+        if (ARG_SHARED OR ARG_MODULE)
+          install(TARGETS ${lib}
+            COMPONENT ${lib}
+            ${export_to_clangtargets}
+            LIBRARY DESTINATION lib${LLVM_LIBDIR_SUFFIX}
+            ARCHIVE DESTINATION lib${LLVM_LIBDIR_SUFFIX}
+            RUNTIME DESTINATION bin)
+          set_property(GLOBAL APPEND PROPERTY CLANG_EXPORTS ${lib})
+        endif()
 
         if (NOT LLVM_ENABLE_IDE)
           add_llvm_install_targets(install-${lib}
@@ -130,7 +133,6 @@ macro(add_clang_library name)
 
         set_property(GLOBAL APPEND PROPERTY CLANG_LIBS ${lib})
       endif()
-      set_property(GLOBAL APPEND PROPERTY CLANG_EXPORTS ${lib})
     else()
       # Add empty "phony" target
       add_custom_target(${lib})

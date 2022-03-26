@@ -14,13 +14,6 @@ macro(add_lld_library name)
 
   if (NOT LLVM_INSTALL_TOOLCHAIN_ONLY)
     get_target_export_arg(${name} LLD export_to_lldtargets)
-    install(TARGETS ${name}
-      COMPONENT ${name}
-      ${export_to_lldtargets}
-      LIBRARY DESTINATION lib${LLVM_LIBDIR_SUFFIX}
-      ARCHIVE DESTINATION lib${LLVM_LIBDIR_SUFFIX}
-      RUNTIME DESTINATION bin)
-
     if (${ARG_SHARED} AND NOT CMAKE_CONFIGURATION_TYPES)
       add_llvm_install_targets(install-${name}
         DEPENDS ${name}

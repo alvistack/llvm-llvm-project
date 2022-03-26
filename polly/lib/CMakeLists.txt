@@ -123,7 +123,7 @@ endif()
 # It depends on all library it needs, such that with
 # LLVM_POLLY_LINK_INTO_TOOLS=ON, its dependencies like PollyISL are linked as
 # well.
-target_link_libraries(Polly PUBLIC
+target_link_libraries(Polly PRIVATE
   ${ISL_TARGET}
 )
 
@@ -158,7 +158,7 @@ else ()
   # hosts. This is not the case for bugpoint. Use LLVM_POLLY_LINK_INTO_TOOLS=ON
   # instead which will automatically resolve the additional dependencies by
   # Polly.
-  target_link_libraries(LLVMPolly PUBLIC ${ISL_TARGET})
+  target_link_libraries(LLVMPolly PRIVATE ${ISL_TARGET})
   if (GPU_CODEGEN)
     target_link_libraries(LLVMPolly PUBLIC PollyPPCG)
   endif ()

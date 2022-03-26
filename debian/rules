@@ -1,0 +1,55 @@
+#!/usr/bin/make -f
+
+SHELL := /bin/bash
+
+override_dh_auto_configure:
+
+override_dh_auto_build:
+	dh_auto_configure -- \
+		-DBUILD_SHARED_LIBS:BOOL=OFF \
+		-DCLANG_ENABLE_ARCMT:BOOL=OFF \
+		-DCLANG_ENABLE_STATIC_ANALYZER:BOOL=OFF \
+		-DCMAKE_BUILD_TYPE=Release \
+		-DCMAKE_INSTALL_PREFIX=/usr/lib/llvm-13 \
+		-DCMAKE_SKIP_RPATH:BOOL=ON \
+		-DCOMPILER_RT_BUILD_SANITIZERS:BOOL=OFF \
+		-DCOMPILER_RT_BUILD_XRAY:BOOL=OFF \
+		-DENABLE_LINKER_BUILD_ID=ON \
+		-DLLVM_BUILD_DOCS:BOOL=OFF \
+		-DLLVM_BUILD_EXAMPLES:BOOL=OFF \
+		-DLLVM_BUILD_LLVM_DYLIB:BOOL=OFF \
+		-DLLVM_BUILD_TESTS:BOOL=OFF \
+		-DLLVM_BUILD_TOOLS:BOOL=OFF \
+		-DLLVM_BUILD_UTILS:BOOL=OFF \
+		-DLLVM_ENABLE_ASSERTIONS=OFF \
+		-DLLVM_INSTALL_TOOLCHAIN_ONLY:BOOL=OFF \
+		-DLLVM_LINK_LLVM_DYLIB:BOOL=OFF \
+		-DLLVM_PARALLEL_COMPILE_JOBS=1 \
+		-DLLVM_PARALLEL_LINK_JOBS=1 \
+		-DLLVM_POLLY_BUILD:BOOL=OFF \
+		-DLLVM_TARGETS_TO_BUILD=Native \
+		-DLLVM_TOOL_CLANG_TOOLS_EXTRA_BUILD:BOOL=OFF \
+		../llvm
+	dh_auto_build
+
+override_dh_auto_install:
+	dh_auto_install --destdir=debian/tmp
+	ln -fs /usr/lib/llvm-13/bin/* debian/tmp/usr/bin
+	fdupes -s debian/tmp
+
+override_dh_strip:
+
+override_dh_strip_nondeterminism:
+
+override_dh_shlibdeps:
+
+override_dh_makeshlibs:
+
+override_dh_dwz:
+
+override_dh_auto_test:
+
+override_dh_auto_clean:
+
+%:
+	dh $@  --buildsystem=cmake

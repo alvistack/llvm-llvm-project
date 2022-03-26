@@ -820,11 +820,14 @@ macro(add_llvm_library name)
       endif()
 
       get_target_export_arg(${name} LLVM export_to_llvmexports ${umbrella})
-      install(TARGETS ${name}
-              ${export_to_llvmexports}
-              LIBRARY DESTINATION lib${LLVM_LIBDIR_SUFFIX} COMPONENT ${name}
-              ARCHIVE DESTINATION lib${LLVM_LIBDIR_SUFFIX} COMPONENT ${name}
-              RUNTIME DESTINATION bin COMPONENT ${name})
+      if(ARG_SHARED OR ARG_MODULE OR NOT LLVM_BUILD_LLVM_DYLIB)
+        install(TARGETS ${name}
+                ${export_to_llvmexports}
+                LIBRARY DESTINATION lib${LLVM_LIBDIR_SUFFIX} COMPONENT ${name}
+                ARCHIVE DESTINATION lib${LLVM_LIBDIR_SUFFIX} COMPONENT ${name}
+                RUNTIME DESTINATION bin COMPONENT ${name})
+        set_property(GLOBAL APPEND PROPERTY LLVM_EXPORTS ${name})
+      endif()
 
       if (NOT LLVM_ENABLE_IDE)
         add_llvm_install_targets(install-${name}
@@ -832,7 +835,6 @@ macro(add_llvm_library name)
                                  COMPONENT ${name})
       endif()
     endif()
-    set_property(GLOBAL APPEND PROPERTY LLVM_EXPORTS ${name})
   endif()
   if (ARG_MODULE)
     set_target_properties(${name} PROPERTIES FOLDER "Loadable modules")

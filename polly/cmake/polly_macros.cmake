@@ -42,12 +42,14 @@ macro(add_polly_library name)
     llvm_config(${name} ${LLVM_LINK_COMPONENTS})
   endif( LLVM_LINK_COMPONENTS )
   if (NOT LLVM_INSTALL_TOOLCHAIN_ONLY OR ${name} STREQUAL "LLVMPolly")
-    install(TARGETS ${name}
-      EXPORT LLVMExports
-      LIBRARY DESTINATION lib${LLVM_LIBDIR_SUFFIX}
-      ARCHIVE DESTINATION lib${LLVM_LIBDIR_SUFFIX})
+    if (MODULE OR SHARED_LIBRARY OR NOT LLVM_BUILD_LLVM_DYLIB)
+      install(TARGETS ${name}
+        EXPORT LLVMExports
+        LIBRARY DESTINATION lib${LLVM_LIBDIR_SUFFIX}
+        ARCHIVE DESTINATION lib${LLVM_LIBDIR_SUFFIX})
+      set_property(GLOBAL APPEND PROPERTY LLVM_EXPORTS ${name})
+    endif()
   endif()
-  set_property(GLOBAL APPEND PROPERTY LLVM_EXPORTS ${name})
 endmacro(add_polly_library)
 
 macro(add_polly_loadable_module name)
